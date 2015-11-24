@@ -16,32 +16,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../semafloor-profile-page.html">
   </head>
-  <body unresolved>
+  <body >
 
-    <p>An example of <code>&lt;semafloor-profile-page&gt;</code>:</p>
-
-    <p>Make words! <button id="saybtn">Say Something</button></p>
-    <p>Make lasers! <button id="laserbtn">Fire lasers</button></p>
-
-    <semafloor-profile-page author='{"name": "Lord Meowser", "image": "http://placekitten.com/g/200/300"}' fancy>
-      <h2>Hello semafloor-profile-page</h2>
-    </semafloor-profile-page>
-
+    <semafloor-profile-page></semafloor-profile-page>
+    
     <script>
       var seedElement = document.querySelector('semafloor-profile-page');
-      
-      document.querySelector('#saybtn').addEventListener('click', function() {
-        alert(seedElement.sayHello('Hallo!'));
-      });
-      
-      document.querySelector('#laserbtn').addEventListener('click', function() {
-        seedElement.fireLasers();
-      });
-      
-      document.addEventListener("semafloor-profile-page-lasers", function(e) {
-        console.log(e.detail.sound);
-      });
-      
+
     </script>
 
   </body>
