@@ -6,6 +6,8 @@
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../paper-radio-button/paper-radio-button.html">
 
 <!--
 An element providing a solution to no problem in particular.
@@ -97,11 +99,15 @@ Example:
           <h2>Change Time zone</h2>
           <p>
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi, ipsum.
+          <paper-radio-group selected="{{_timezone::paper-radio-group-changed}}">
+            <paper-radio-button name="eight" label="GMT +8">GMT +8</paper-radio-button>
+            <paper-radio-button name="nine" label="GMT +9">GMT +9</paper-radio-button>
+          </paper-radio-group>
           </p>
         </div>
         <div class="buttons change-tzone-buttons">
           <paper-button dialog-dismiss>Cancel</paper-button>
-          <paper-button dialog-confirm>Accept</paper-button>
+          <paper-button dialog-confirm on-tap="_confirmChangeTzone">Change</paper-button>
         </div>
       </paper-dialog>
     </div>
@@ -136,7 +142,10 @@ Example:
 
       _invalidEmail: Boolean,
       _changeEmail: String,
-
+      _timezone: {
+        type: String,
+        value: 'eight'
+      },
 
     },
 
@@ -218,24 +227,52 @@ Example:
     },
 
     _confirmChangeEmail: function (ev) {
-      console.log(ev);
       var _target = ev.target;
 
       if (_target && _target.tagName === 'PAPER-BUTTON') {
         if (this._changeEmail && !this._invalidEmail) {
-          this.$.profileToast.text = 'Email has been changed successfully!'
+          this.$.profileToast.text = 'Email has been changed successfully!';
           // change to modify value in Firebase.
           this.set('profile.email', this._changeEmail);
           this.async(function() {
             this.$.profileToast.show();
           }, 300);
         }else {
-          this.$.profileToast.text = 'Something wrong! Please try again.'
+          this.$.profileToast.text = 'Something wrong! Please try again.';
           this.async(function() {
             this.$.profileToast.show();
           }, 300);
         }
       }
+    },
+
+    _confirmChangeTzone: function (ev) {
+      console.log(ev);
+      var _target = ev.target;
+
+      if (_target && _target.tagName === 'PAPER-BUTTON') {
+        if (this._timezone) {
+          var _timezone = this._timezone === 'eight' ? 'GMT +8' : 'GMT +9';
+
+          // hide toast for the next display.
+          if (this.$.profileToast.visible) {
+            this.$.profileToast.hide();
+          }
+
+          this.$.profileToast.text = 'Timezone has been changed successfully!';
+          // change to modify value in Firebase.
+          this.set('profile.tzone', _timezone);
+          this.async(function() {
+            this.$.profileToast.show()
+          }, 300);
+        }else {
+          this.$.profileToast.text = 'Something wrong! Please try again.';
+          this.async(function() {
+            this.$.profileToast.show();
+          }, 300);
+        }
+      }
+
     },
 
 
