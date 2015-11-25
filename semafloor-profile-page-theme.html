@@ -13,7 +13,7 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
 
-        margin: 40px 8px;
+        margin: 40px 0;
         display: block;
       }
 
@@ -22,9 +22,10 @@
       }
 
       .profile-list {
+        position: relative;
         border-bottom: 1px solid #ddd;
-        margin: 16px 0;
-        padding: 8px;
+        /*margin: 16px 0;*/
+        padding: 16px 0 16px 16px;
         min-height: 64px;
       }
 
@@ -34,7 +35,25 @@
 
       div > span+span {
         color: #757575;
-        margin-left: 8px;
+      }
+
+      paper-dialog
+      .paper-dialog-container > h2 {
+        color: #1DDBD8;
+      }
+
+      paper-input.profile-change-email {
+        --paper-input-container-focus-color: #1DDBD8;
+      }
+
+      .change-email-buttons paper-button,
+      .change-tzone-buttons paper-button {
+        color: #1DDBD8;
+      }
+
+      paper-toast {
+        margin-left: 0;
+        margin-bottom: 0;
       }
 
 

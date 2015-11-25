@@ -1,6 +1,12 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="semafloor-profile-page-theme.html">
 
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+
 <!--
 An element providing a solution to no problem in particular.
 
@@ -21,38 +27,83 @@ Example:
     <div class="profile-list">
       <span>User Name</span>
       <span>{{profile.username}}</span>
+      <paper-ripple></paper-ripple>
     </div>
     <div class="profile-list">
       <span>User ID</span>
       <span>{{profile.uid}}</span>
+      <paper-ripple></paper-ripple>
     </div>
     <div class="profile-list">
       <span>Group</span>
       <span>{{profile.group}}</span>
+      <paper-ripple></paper-ripple>
     </div>
-    <div class="profile-list">
+    <div class="profile-list" on-tap="_changeProfileDetails" data-profile="email">
       <span>Email</span>
       <span>{{profile.email}}</span>
+      <paper-ripple></paper-ripple>
     </div>
     <div class="profile-list">
       <span>Role</span>
       <span>{{profile.role}}</span>
+      <paper-ripple></paper-ripple>
     </div>
     <div class="profile-list">
       <span>Room membership</span>
       <span>{{profile.room}}</span>
+      <paper-ripple></paper-ripple>
     </div>
     <div class="profile-list">
       <span>Floor membership</span>
       <span>{{profile.floor}}</span>
+      <paper-ripple></paper-ripple>
     </div>
-    <div class="profile-list">
+    <div class="profile-list" on-tap="_changeProfileDetails" data-profile="tzone">
       <span>Time zone</span>
       <span>{{profile.tzone}}</span>
+      <paper-ripple></paper-ripple>
     </div>
     <div class="profile-list">
       <span>Timeout</span>
       <span>{{profile.tout}}</span>
+      <paper-ripple></paper-ripple>
+    </div>
+
+    <paper-toast id="profileToast" text=""></paper-toast>
+    <div class="dialog-section">
+      <paper-dialog id="emailDialog" with-backdrop entry-animation="" exit-animation="">
+        <div class="paper-dialog-container">
+          <h2>Change Email</h2>
+          <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit, numquam! Tempore voluptatum praesentium atque ipsum voluptatibus quis dolore, mutatio inscriptio.
+          <paper-input class="profile-change-email" label="Change email"
+            type="text"
+            auto-validate
+            invalid="{{_invalidEmail}}"
+            value="{{_changeEmail::input}}"
+            error-message="Invalid Email Address!"
+            pattern="\w\S+@\w\S+\.\S+"></paper-input>
+          </p>
+        </div>
+        <div class="buttons change-email-buttons">
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button dialog-confirm on-tap="_confirmChangeEmail">Change</paper-button>
+        </div>
+      </paper-dialog>
+
+      <paper-dialog id="tzoneDialog" with-backdrop>
+        <div class="paper-dialog-container">
+          <h2>Change Time zone</h2>
+          <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi, ipsum.
+          </p>
+        </div>
+        <div class="buttons change-tzone-buttons">
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button dialog-confirm>Accept</paper-button>
+        </div>
+      </paper-dialog>
     </div>
   </template>
 
@@ -81,7 +132,11 @@ Example:
             tout: 1440
           }
         }
-      }
+      },
+
+      _invalidEmail: Boolean,
+      _changeEmail: String,
+
 
     },
 
@@ -141,7 +196,48 @@ Example:
      */
     fireLasers: function() {
       this.fire('semafloor-profile-page-lasers', {sound: 'Pew pew!'});
-    }
+    },
+
+    _changeProfileDetails: function (ev) {
+      console.log(ev.target.tagName);
+      var _target = ev.target;
+
+      while (_target && _target.tagName !== 'DIV') {
+        _target = _target.parentElement;
+      }
+
+      if (_target && _target.hasAttribute('data-profile')) {
+        var _detail = _target.getAttribute('data-profile');
+
+        if (_detail === 'email') {
+          this.$.emailDialog.open();
+        }else if (_detail === 'tzone') {
+          this.$.tzoneDialog.open();
+        }
+      }
+    },
+
+    _confirmChangeEmail: function (ev) {
+      console.log(ev);
+      var _target = ev.target;
+
+      if (_target && _target.tagName === 'PAPER-BUTTON') {
+        if (this._changeEmail && !this._invalidEmail) {
+          this.$.profileToast.text = 'Email has been changed successfully!'
+          // change to modify value in Firebase.
+          this.set('profile.email', this._changeEmail);
+          this.async(function() {
+            this.$.profileToast.show();
+          }, 300);
+        }else {
+          this.$.profileToast.text = 'Something wrong! Please try again.'
+          this.async(function() {
+            this.$.profileToast.show();
+          }, 300);
+        }
+      }
+    },
+
 
   });
 
