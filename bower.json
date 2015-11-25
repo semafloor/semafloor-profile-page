@@ -1,18 +1,19 @@
 {
   "name": "semafloor-profile-page",
-  "version": "1.0.3",
+  "version": "0.2.0",
   "authors": [
-    "Anonymous <anonymous@example.com>"
+    "semafloor <semafloor@semafloor.com>"
   ],
   "description": "An element providing a solution to no problem in particular.",
   "keywords": [
     "web-component",
     "polymer",
-    "seed"
+    "seed",
+    "semafloor"
   ],
   "main": "semafloor-profile-page.html",
-  "license": "http://polymer.github.io/LICENSE.txt",
-  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "license": "MIT",
+  "homepage": "https://github.com/semafloor/semafloor-profile-page",
   "ignore": [
     "/.*",
     "/test/"
