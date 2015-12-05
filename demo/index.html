@@ -15,16 +15,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <title>semafloor-profile-page Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../semafloor-profile-page.html">
+    <link rel="import" href="../../app-layout/app-drawer-layout/app-drawer-layout.html">
+    <link rel="import" href="../../app-layout/app-header-layout/app-header-layout.html">
+    <link rel="import" href="../../app-layout/app-header/app-header.html">
+    <link rel="import" href="../../app-layout/app-toolbar/app-toolbar.html">
+    <link rel="import" href="../../iron-pages/iron-pages.html">
 
     <style>
       body {
         margin: 0;
       }
+
+      app-toolbar {
+        background-color: #607D8B;
+        color: #fff;
+      }
+
     </style>
   </head>
   <body >
 
-    <semafloor-profile-page></semafloor-profile-page>
+    <app-drawer-layout fullbleed>
+      <!-- drawer panel -->
+      <app-header-layout drawer></app-header-layout>
+
+      <!-- main panel -->
+      <app-header-layout main>
+        <app-header waterfall condenses>
+          <app-toolbar></app-toolbar>
+          <app-toolbar>
+            <span>My Profile</span>
+          </app-toolbar>
+        </app-header>
+
+        <!-- main content -->
+        <iron-pages selected="0">
+          <semafloor-profile-page></semafloor-profile-page>
+          <div>One</div>
+          <div>Two</div>
+          <div>Three</div>
+        </iron-pages>
+      </app-header-layout>
+    </app-drawer-layout>
 
     <script>
       var seedElement = document.querySelector('semafloor-profile-page');
