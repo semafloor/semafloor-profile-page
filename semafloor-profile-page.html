@@ -26,50 +26,50 @@ Example:
   <template strip-whitespace>
     <style include="semafloor-profile-page-theme"></style>
 
-    <div class="profile-list">
+    <div class="profile-list" ripple="uname">
       <span>User Name</span>
       <span>{{profile.username}}</span>
-      <paper-ripple></paper-ripple>
+      <paper-ripple id="uname"></paper-ripple>
     </div>
-    <div class="profile-list">
+    <div class="profile-list" ripple="uid">
       <span>User ID</span>
       <span>{{profile.uid}}</span>
-      <paper-ripple></paper-ripple>
+      <paper-ripple id="uid"></paper-ripple>
     </div>
-    <div class="profile-list">
+    <div class="profile-list" ripple="group">
       <span>Group</span>
       <span>{{profile.group}}</span>
-      <paper-ripple></paper-ripple>
+      <paper-ripple id="group"></paper-ripple>
     </div>
-    <div class="profile-list" on-tap="_changeProfileDetails" data-profile="email">
+    <div class="profile-list" on-tap="_changeProfileDetails" data-profile="email" ripple="email">
       <span>Email</span>
       <span>{{profile.email}}</span>
-      <paper-ripple></paper-ripple>
+      <paper-ripple id="email"></paper-ripple>
     </div>
-    <div class="profile-list">
+    <div class="profile-list" ripple="role">
       <span>Role</span>
       <span>{{profile.role}}</span>
-      <paper-ripple></paper-ripple>
+      <paper-ripple id="role"></paper-ripple>
     </div>
-    <div class="profile-list">
+    <div class="profile-list" ripple="room">
       <span>Room membership</span>
       <span>{{profile.room}}</span>
-      <paper-ripple></paper-ripple>
+      <paper-ripple id="room"></paper-ripple>
     </div>
-    <div class="profile-list">
+    <div class="profile-list" ripple="floor">
       <span>Floor membership</span>
       <span>{{profile.floor}}</span>
-      <paper-ripple></paper-ripple>
+      <paper-ripple id="floor"></paper-ripple>
     </div>
-    <div class="profile-list" on-tap="_changeProfileDetails" data-profile="tzone">
+    <div class="profile-list" on-tap="_changeProfileDetails" data-profile="tzone" ripple="time">
       <span>Time zone</span>
       <span>{{profile.tzone}}</span>
-      <paper-ripple></paper-ripple>
+      <paper-ripple id="time"></paper-ripple>
     </div>
-    <div class="profile-list">
+    <div class="profile-list" ripple="timeout">
       <span>Timeout</span>
       <span>{{profile.tout}}</span>
-      <paper-ripple></paper-ripple>
+      <paper-ripple id="timeout"></paper-ripple>
     </div>
 
     <paper-toast id="profileToast" text=""></paper-toast>
@@ -146,7 +146,16 @@ Example:
         type: String,
         value: 'eight'
       },
+      _scrolled: Boolean,
+      _rippleToBeCancelled: String,
 
+    },
+
+    listeners: {
+      'down': '_onDown',
+      'up': '_onUp',
+      'mousemove': '_cancelRippleWhileScrolling',
+      'touchmove': '_cancelRippleWhileScrolling'
     },
 
     // Element Lifecycle
@@ -177,39 +186,11 @@ Example:
       // Use this to clean up anything you did in `attached`.
     },
 
-    // Element Behavior
-
-    /**
-     * The `semafloor-profile-page-lasers` event is fired whenever `fireLasers` is called.
-     *
-     * @event semafloor-profile-page-lasers
-     * @detail {{sound: String}}
-     */
-
-    /**
-     * Sometimes it's just nice to say hi.
-     *
-     * @param {string} greeting A positive greeting.
-     * @return {string} The full greeting.
-     */
-    sayHello: function(greeting) {
-      var response = greeting || 'Hello World!';
-      return 'semafloor-profile-page says, ' + response;
-    },
-
-    /**
-     * Attempt to destroy this element's enemies with a beam of light!
-     *
-     * Or, at least, dispatch an event in the vain hope that someone else will
-     * do the zapping.
-     */
-    fireLasers: function() {
-      this.fire('semafloor-profile-page-lasers', {sound: 'Pew pew!'});
-    },
-
     _changeProfileDetails: function (ev) {
-      console.log(ev.target.tagName);
       var _target = ev.target;
+      if (this._scrolled) {
+        return;
+      }
 
       while (_target && _target.tagName !== 'DIV') {
         _target = _target.parentElement;
@@ -228,6 +209,9 @@ Example:
 
     _confirmChangeEmail: function (ev) {
       var _target = ev.target;
+      if (this._scrolled) {
+        return;
+      }
 
       if (_target && _target.tagName === 'PAPER-BUTTON') {
         if (this._changeEmail && !this._invalidEmail) {
@@ -247,8 +231,10 @@ Example:
     },
 
     _confirmChangeTzone: function (ev) {
-      console.log(ev);
       var _target = ev.target;
+      if (this._scrolled) {
+        return;
+      }
 
       if (_target && _target.tagName === 'PAPER-BUTTON') {
         if (this._timezone) {
@@ -272,7 +258,28 @@ Example:
           }, 300);
         }
       }
+    },
 
+    _onUp: function (ev) {
+      this.set('_scrolled', false);
+    },
+
+    _cancelRippleWhileScrolling: function () {
+      this.set('_scrolled', true);
+      this.$[this._rippleToBeCancelled].upAction();
+    },
+
+    _onDown: function (ev) {
+      var _target = ev.target;
+
+      while (_target && _target.tagName !== 'DIV') {
+        _target = _target.parentElement;
+      }
+
+      if (_target && _target.hasAttribute('ripple')) {
+        var _ripple = _target.getAttribute('ripple');
+        this.set('_rippleToBeCancelled', _ripple);
+      }
     },
 
 
