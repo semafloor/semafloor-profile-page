@@ -14,9 +14,7 @@
         box-sizing: border-box;
 
         display: block;
-        @apply(--paper-font-common-base);
       }
-
       *, *::before, *::after {
         box-sizing: inherit;
       }
@@ -24,49 +22,50 @@
       .profile-list {
         position: relative;
         border-bottom: 1px solid #ddd;
-        padding: 16px 0 16px 16px;
+        padding: 16px 0 16px 24px;
         min-height: 64px;
       }
-
       div > span {
         display: block;
-      }
-
-      div > span+span {
+        margin-top: 4px;
         color: #757575;
       }
+      div:nth-child(9) {
+        margin-bottom: 64px;
+      }
 
-      paper-dialog
-      .paper-dialog-container > h2 {
+      paper-dialog {
+        overflow-y: auto;
+      }
+      paper-dialog > h2 {
         color: #1DDBD8;
       }
-
-      paper-input.profile-change-email {
+      paper-dialog paper-input.profile-change-email {
         --paper-input-container-focus-color: #1DDBD8;
+        margin-bottom: 16px;
       }
-
-      .change-email-buttons paper-button,
-      .change-tzone-buttons paper-button {
+      .buttons > paper-button {
         -webkit-tap-highlight-color: transparent;
         -webkit-tap-highlight-color: rgba(0,0,0,0);
         color: #1DDBD8;
+      }
+
+      paper-radio-group {
+        margin-bottom: 16px;
+      }
+      paper-radio-group,
+      paper-radio-button {
+        display: block;
+      }
+      paper-radio-button {
+        --paper-radio-button-checked-ink-color: #1DDBD8;
+        --paper-radio-button-checked-color: #1DDBD8;
       }
 
       paper-toast {
         margin-left: 0;
         margin-bottom: 0;
       }
-
-      paper-radio-group,
-      paper-radio-button {
-        display: block;
-      }
-
-      paper-radio-button {
-        --paper-radio-button-checked-ink-color: #1DDBD8;
-        --paper-radio-button-checked-color: #1DDBD8;
-      }
-
 
     </style>
 

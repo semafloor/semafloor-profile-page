@@ -3,6 +3,7 @@
 
 <link rel="import" href="../paper-ripple/paper-ripple.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-toast/paper-toast.html">
@@ -27,90 +28,81 @@ Example:
     <style include="semafloor-profile-page-theme"></style>
 
     <div class="profile-list" ripple="uname">
-      <span>User Name</span>
+      User Name
       <span>{{profile.username}}</span>
       <paper-ripple id="uname"></paper-ripple>
     </div>
     <div class="profile-list" ripple="uid">
-      <span>User ID</span>
+      User ID
       <span>{{profile.uid}}</span>
       <paper-ripple id="uid"></paper-ripple>
     </div>
     <div class="profile-list" ripple="group">
-      <span>Group</span>
+      Group
       <span>{{profile.group}}</span>
       <paper-ripple id="group"></paper-ripple>
     </div>
-    <div class="profile-list" on-tap="_changeProfileDetails" data-profile="email" ripple="email">
-      <span>Email</span>
+    <div class="profile-list" on-tap="_changeDetail" data-profile="email" ripple="email">
+      Email
       <span>{{profile.email}}</span>
       <paper-ripple id="email"></paper-ripple>
     </div>
     <div class="profile-list" ripple="role">
-      <span>Role</span>
+      Role
       <span>{{profile.role}}</span>
       <paper-ripple id="role"></paper-ripple>
     </div>
     <div class="profile-list" ripple="room">
-      <span>Room membership</span>
+      Room membership
       <span>{{profile.room}}</span>
       <paper-ripple id="room"></paper-ripple>
     </div>
     <div class="profile-list" ripple="floor">
-      <span>Floor membership</span>
+      Floor Membership
       <span>{{profile.floor}}</span>
       <paper-ripple id="floor"></paper-ripple>
     </div>
-    <div class="profile-list" on-tap="_changeProfileDetails" data-profile="tzone" ripple="time">
-      <span>Time zone</span>
+    <div class="profile-list" on-tap="_changeDetail" data-profile="tzone" ripple="time">
+      Time Zone
       <span>{{profile.tzone}}</span>
       <paper-ripple id="time"></paper-ripple>
     </div>
     <div class="profile-list" ripple="timeout">
-      <span>Timeout</span>
+      Timeout
       <span>{{profile.tout}}</span>
       <paper-ripple id="timeout"></paper-ripple>
     </div>
 
-    <paper-toast id="profileToast" text=""></paper-toast>
-    <div class="dialog-section">
-      <paper-dialog id="emailDialog" with-backdrop entry-animation="" exit-animation="">
-        <div class="paper-dialog-container">
-          <h2>Change Email</h2>
-          <p>
+    <paper-dialog id="changeDialog" with-backdrop auto-fit-on-attach no-auto-focus>
+      <h2>[[_changeTitle]]</h2>
+      <paper-dialog-scrollable>
+        <div hidden$="[[!_isEmail(_changeDialog)]]">
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit, numquam! Tempore voluptatum praesentium atque ipsum voluptatibus quis dolore, mutatio inscriptio.
-          <paper-input class="profile-change-email" label="Change email"
+          <paper-input class="profile-change-email"
+            label="Change email"
             type="text"
             auto-validate
             invalid="{{_invalidEmail}}"
             value="{{_changeEmail::input}}"
             error-message="Invalid Email Address!"
             pattern="\w\S+@\w\S+\.\S+"></paper-input>
-          </p>
         </div>
-        <div class="buttons change-email-buttons">
-          <paper-button dialog-dismiss>Cancel</paper-button>
-          <paper-button dialog-confirm on-tap="_confirmChangeEmail">Change</paper-button>
-        </div>
-      </paper-dialog>
 
-      <paper-dialog id="tzoneDialog" with-backdrop>
-        <div class="paper-dialog-container">
-          <h2>Change Time zone</h2>
-          <p>
+        <div hidden$="[[_isEmail(_changeDialog)]]">
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi, ipsum.
           <paper-radio-group selected="{{_timezone::paper-radio-group-changed}}">
             <paper-radio-button name="eight" label="GMT +8">GMT +8</paper-radio-button>
             <paper-radio-button name="nine" label="GMT +9">GMT +9</paper-radio-button>
           </paper-radio-group>
-          </p>
         </div>
-        <div class="buttons change-tzone-buttons">
-          <paper-button dialog-dismiss>Cancel</paper-button>
-          <paper-button dialog-confirm on-tap="_confirmChangeTzone">Change</paper-button>
-        </div>
-      </paper-dialog>
-    </div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm on-tap="_confirmChange">Change</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-toast id="profileToast" text="[[_message]]"></paper-toast>
   </template>
 
 </dom-module>
@@ -148,13 +140,15 @@ Example:
       },
       _scrolled: Boolean,
       _rippleToBeCancelled: String,
-
+      _changeDialog: String,
+      _changeTitle: String,
+      _prevYPos: Number,
+      _message: String,
     },
 
     listeners: {
       'down': '_onDown',
       'up': '_onUp',
-      'mousemove': '_cancelRippleWhileScrolling',
       'touchmove': '_cancelRippleWhileScrolling'
     },
 
@@ -186,12 +180,15 @@ Example:
       // Use this to clean up anything you did in `attached`.
     },
 
-    _changeProfileDetails: function (ev) {
-      var _target = ev.target;
+    _isEmail: function(_changeDialog) {
+      return _changeDialog === 'email';
+    },
+    _changeDetail: function (ev) {
       if (this._scrolled) {
         return;
       }
 
+      var _target = ev.target;
       while (_target && _target.tagName !== 'DIV') {
         _target = _target.parentElement;
       }
@@ -199,76 +196,58 @@ Example:
       if (_target && _target.hasAttribute('data-profile')) {
         var _detail = _target.getAttribute('data-profile');
 
-        if (_detail === 'email') {
-          this.$.emailDialog.open();
-        }else if (_detail === 'tzone') {
-          this.$.tzoneDialog.open();
-        }
+        this.set('_changeTitle', _detail === 'email' ?
+          'Change Email' : 'Change Time Zone');
+        this.set('_changeDialog', _detail);
+        this.$.changeDialog.open();
       }
     },
 
-    _confirmChangeEmail: function (ev) {
-      var _target = ev.target;
+    _confirmChange: function (ev) {
       if (this._scrolled) {
         return;
       }
 
-      if (_target && _target.tagName === 'PAPER-BUTTON') {
-        if (this._changeEmail && !this._invalidEmail) {
-          this.$.profileToast.text = 'Email has been changed successfully!';
-          // change to modify value in Firebase.
-          this.set('profile.email', this._changeEmail);
-          this.async(function() {
-            this.$.profileToast.show();
-          }, 300);
-        }else {
-          this.$.profileToast.text = 'Something wrong! Please try again.';
-          this.async(function() {
-            this.$.profileToast.show();
-          }, 300);
-        }
-      }
-    },
-
-    _confirmChangeTzone: function (ev) {
       var _target = ev.target;
-      if (this._scrolled) {
-        return;
-      }
-
       if (_target && _target.tagName === 'PAPER-BUTTON') {
-        if (this._timezone) {
-          var _timezone = this._timezone === 'eight' ? 'GMT +8' : 'GMT +9';
-
-          // hide toast for the next display.
-          if (this.$.profileToast.visible) {
-            this.$.profileToast.hide();
+        var _text = 'Something wrong! Please try again.';
+        // hide toast for the next display.
+        if (this.$.profileToast.opened) {
+          this.$.profileToast.hide();
+        }
+        // update change accordingly.
+        if (this._changeDialog === 'email') {
+          if (this._changeEmail && !this._invalidEmail) {
+            _text = 'Email has been changed successfully!';
+            // TODO: change to modify value in Firebase.
+            this.set('profile.email', this._changeEmail);
           }
-
-          this.$.profileToast.text = 'Timezone has been changed successfully!';
-          // change to modify value in Firebase.
-          this.set('profile.tzone', _timezone);
-          this.async(function() {
-            this.$.profileToast.show()
-          }, 300);
         }else {
-          this.$.profileToast.text = 'Something wrong! Please try again.';
-          this.async(function() {
-            this.$.profileToast.show();
-          }, 300);
+          if (this._timezone) {
+            _text = 'Timezone has been changed successfully!';
+            // TODO: change to modify value in Firebase.
+            this.set('profile.tzone', this._timezone === 'eight' ? 'GMT +8' : 'GMT +9');
+          }
         }
+        // update toast message.
+        this.set('_message', _text);
+        this.async(function() {
+          this.$.profileToast.show()
+        });
       }
     },
 
-    _onUp: function (ev) {
-      this.set('_scrolled', false);
+    _cancelRippleWhileScrolling: function (ev) {
+      if (!this._scrolled) {
+        // change if y position changes.
+        if (this._prevYPos !== ev.changedTouches.screenY) {
+          this.set('_scrolled', true);
+        }
+      }else {
+        // cancel ripple effect during scrolling.
+        this.$[this._rippleToBeCancelled].upAction();
+      }
     },
-
-    _cancelRippleWhileScrolling: function () {
-      this.set('_scrolled', true);
-      this.$[this._rippleToBeCancelled].upAction();
-    },
-
     _onDown: function (ev) {
       var _target = ev.target;
 
@@ -279,10 +258,14 @@ Example:
       if (_target && _target.hasAttribute('ripple')) {
         var _ripple = _target.getAttribute('ripple');
         this.set('_rippleToBeCancelled', _ripple);
+        this.set('_prevYPos', Math.ceil(ev.detail.y));
       }
     },
-
-
+    _onUp: function (ev) {
+      if (this._scrolled) {
+        this.set('_scrolled', false);
+      }
+    },
   });
 
 </script>
