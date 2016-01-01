@@ -238,6 +238,7 @@ Example:
     },
 
     _cancelRippleWhileScrolling: function (ev) {
+      console.log('touch-scrolling');
       if (!this._scrolled) {
         // change if y position changes.
         if (this._prevYPos !== ev.changedTouches.screenY) {
