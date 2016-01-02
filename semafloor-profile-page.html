@@ -78,12 +78,11 @@ Example:
       <paper-dialog-scrollable>
         <div hidden$="[[!_isEmail(_changeDialog)]]">
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit, numquam! Tempore voluptatum praesentium atque ipsum voluptatibus quis dolore, mutatio inscriptio.
-          <paper-input class="profile-change-email"
+          <paper-input id="changeEmail" class="profile-change-email"
             label="Change email"
             type="text"
             auto-validate
             invalid="{{_invalidEmail}}"
-            value="{{_changeEmail}}"
             error-message="Invalid Email Address!"
             pattern="\w\S+@\w\S+\.\S+"></paper-input>
         </div>
@@ -133,7 +132,6 @@ Example:
       },
 
       _invalidEmail: Boolean,
-      _changeEmail: String,
       _timezone: {
         type: String,
         value: 'eight'
@@ -225,10 +223,12 @@ Example:
         }
         // update change accordingly.
         if (this._changeDialog === 'email') {
-          if (this._changeEmail && !this._invalidEmail) {
+          // workaround: to get value of input from the input.
+          var _changeEmail = this.$.changeEmail.value;
+          if (_changeEmail && !this._invalidEmail) {
             _text = 'Email has been changed successfully!';
             // TODO: change to modify value in Firebase.
-            this.set('profile.email', this._changeEmail);
+            this.set('profile.email', _changeEmail);
           }
         }else {
           if (this._timezone) {
