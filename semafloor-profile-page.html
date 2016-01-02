@@ -82,6 +82,7 @@ Example:
             label="Change email"
             type="text"
             auto-validate
+            value="{{_changeEmail}}"
             invalid="{{_invalidEmail}}"
             error-message="Invalid Email Address!"
             pattern="\w\S+@\w\S+\.\S+"></paper-input>
@@ -131,7 +132,14 @@ Example:
         }
       },
 
-      _invalidEmail: Boolean,
+      _invalidEmail: {
+        type: Boolean,
+        value: false
+      },
+      _changEmail: {
+        type: String,
+        value: ''
+      },
       _timezone: {
         type: String,
         value: 'eight'
@@ -224,7 +232,7 @@ Example:
         // update change accordingly.
         if (this._changeDialog === 'email') {
           // workaround: to get value of input from the input.
-          var _changeEmail = this.$.changeEmail.value;
+          var _changeEmail = this._changeEmail;
           if (_changeEmail && !this._invalidEmail) {
             _text = 'Email has been changed successfully!';
             // TODO: change to modify value in Firebase.
@@ -241,7 +249,7 @@ Example:
         this.set('_message', _text);
         this.async(function() {
           this.$.profileToast.show()
-        });
+        }, 100);
       }
     },
 
