@@ -9,7 +9,6 @@
 <link rel="import" href="../paper-toast/paper-toast.html">
 <link rel="import" href="../paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../paper-radio-button/paper-radio-button.html">
-
 <!--
 An element providing a solution to no problem in particular.
 
@@ -23,51 +22,50 @@ Example:
 @hero hero.svg
 -->
 <dom-module id="semafloor-profile-page">
-
   <template strip-whitespace>
     <style include="semafloor-profile-page-theme"></style>
 
-    <div class="profile-list" ripple="uname">
+    <div class="profile-list" ripple="uname" on-down="_onDown" on-up="_onUp">
       User Name
       <span>{{profile.username}}</span>
       <paper-ripple id="uname"></paper-ripple>
     </div>
-    <div class="profile-list" ripple="uid">
+    <div class="profile-list" ripple="uid" on-down="_onDown" on-up="_onUp">
       User ID
       <span>{{profile.uid}}</span>
       <paper-ripple id="uid"></paper-ripple>
     </div>
-    <div class="profile-list" ripple="group">
+    <div class="profile-list" ripple="group" on-down="_onDown" on-up="_onUp">
       Group
       <span>{{profile.group}}</span>
       <paper-ripple id="group"></paper-ripple>
     </div>
-    <div class="profile-list" on-tap="_changeDetail" data-profile="email" ripple="email">
+    <div class="profile-list" on-tap="_setDialog" data-profile="email" ripple="email" on-transitionend="_changeDetail" on-down="_onDown" on-up="_onUp">
       Email
       <span>{{profile.email}}</span>
       <paper-ripple id="email"></paper-ripple>
     </div>
-    <div class="profile-list" ripple="role">
+    <div class="profile-list" ripple="role" on-down="_onDown" on-up="_onUp">
       Role
       <span>{{profile.role}}</span>
       <paper-ripple id="role"></paper-ripple>
     </div>
-    <div class="profile-list" ripple="room">
+    <div class="profile-list" ripple="room" on-down="_onDown" on-up="_onUp">
       Room membership
       <span>{{profile.room}}</span>
       <paper-ripple id="room"></paper-ripple>
     </div>
-    <div class="profile-list" ripple="floor">
+    <div class="profile-list" ripple="floor" on-down="_onDown" on-up="_onUp">
       Floor Membership
       <span>{{profile.floor}}</span>
       <paper-ripple id="floor"></paper-ripple>
     </div>
-    <div class="profile-list" on-tap="_changeDetail" data-profile="tzone" ripple="time">
+    <div class="profile-list" on-tap="_setDialog" data-profile="tzone" ripple="time" on-down="_onDown" on-up="_onUp" on-transitionend="_changeDetail">
       Time Zone
       <span>{{profile.tzone}}</span>
       <paper-ripple id="time"></paper-ripple>
     </div>
-    <div class="profile-list" ripple="timeout">
+    <div class="profile-list" ripple="timeout" on-down="_onDown" on-up="_onUp">
       Timeout
       <span>{{profile.tout}}</span>
       <paper-ripple id="timeout"></paper-ripple>
@@ -108,182 +106,4 @@ Example:
 
 </dom-module>
 
-<script>
-
-  Polymer({
-
-    is: 'semafloor-profile-page',
-
-    properties: {
-
-      profile: {
-        type: Object,
-        value: function () {
-          return {
-            username: 'John Doe',
-            uid: 'jdxhr',
-            group: 2,
-            email: 'johndoe@jmail.com',
-            role: 'normal',
-            room: 'A002',
-            floor: 'T001',
-            tzone: 'GMT +8',
-            tout: 1440
-          }
-        }
-      },
-
-      _invalidEmail: {
-        type: Boolean,
-        value: false
-      },
-      _changEmail: {
-        type: String,
-        value: ''
-      },
-      _timezone: {
-        type: String,
-        value: 'eight'
-      },
-      _scrolled: Boolean,
-      _rippleToBeCancelled: String,
-      _changeDialog: String,
-      _changeTitle: String,
-      _prevYPos: Number,
-      _message: String,
-    },
-
-    listeners: {
-      'down': '_onDown',
-      'up': '_onUp',
-      'touchmove': '_cancelRippleWhileScrolling'
-    },
-
-    // Element Lifecycle
-    created: function() {
-      console.time('profile-page-ready');
-      console.log('profile-page-created');
-    },
-
-    ready: function() {
-      // `ready` is called after all elements have been configured, but
-      // propagates bottom-up. This element's children are ready, but parents
-      // are not.
-      //
-      // This is the point where you should make modifications to the DOM (when
-      // necessary), or kick off any processes the element wants to perform.
-      console.timeEnd('profile-page-ready');
-      this.fire('profile-page-ready');
-    },
-
-    attached: function() {
-      // `attached` fires once the element and its parents have been inserted
-      // into a document.
-      //
-      // This is a good place to perform any work related to your element's
-      // visual state or active behavior (measuring sizes, beginning animations,
-      // loading resources, etc).
-      console.timeEnd('profile-page-attached');
-      this.fire('profile-page-attached');
-    },
-
-    detached: function() {
-      // The analog to `attached`, `detached` fires when the element has been
-      // removed from a document.
-      //
-      // Use this to clean up anything you did in `attached`.
-      console.log('profile-page-detached');
-    },
-
-    _isEmail: function(_changeDialog) {
-      return _changeDialog === 'email';
-    },
-    _changeDetail: function (ev) {
-      if (this._scrolled) {
-        return;
-      }
-
-      var _target = ev.target;
-      while (_target && _target.tagName !== 'DIV') {
-        _target = _target.parentElement;
-      }
-
-      if (_target && _target.hasAttribute('data-profile')) {
-        var _detail = _target.getAttribute('data-profile');
-
-        this.set('_changeTitle', _detail === 'email' ?
-          'Change Email' : 'Change Time Zone');
-        this.set('_changeDialog', _detail);
-        this.$.changeDialog.open();
-      }
-    },
-
-    _confirmChange: function (ev) {
-      if (this._scrolled) {
-        return;
-      }
-
-      var _target = ev.target;
-      if (_target && _target.tagName === 'PAPER-BUTTON') {
-        var _text = 'Something wrong! Please try again.';
-        // hide toast for the next display.
-        if (this.$.profileToast.opened) {
-          this.$.profileToast.hide();
-        }
-        // update change accordingly.
-        if (this._changeDialog === 'email') {
-          // workaround: to get value of input from the input.
-          var _changeEmail = this._changeEmail;
-          if (_changeEmail && !this._invalidEmail) {
-            _text = 'Email has been changed successfully!';
-            // TODO: change to modify value in Firebase.
-            this.set('profile.email', _changeEmail);
-          }
-        }else {
-          if (this._timezone) {
-            _text = 'Timezone has been changed successfully!';
-            // TODO: change to modify value in Firebase.
-            this.set('profile.tzone', this._timezone === 'eight' ? 'GMT +8' : 'GMT +9');
-          }
-        }
-        // update toast message.
-        this.set('_message', _text);
-        this.async(function() {
-          this.$.profileToast.show()
-        }, 350);
-      }
-    },
-
-    _cancelRippleWhileScrolling: function (ev) {
-      console.log('touch-scrolling');
-      if (!this._scrolled) {
-        // change if y position changes.
-        if (this._prevYPos !== ev.changedTouches.screenY) {
-          this.set('_scrolled', true);
-        }
-      }else {
-        // cancel ripple effect during scrolling.
-        this.$[this._rippleToBeCancelled].upAction();
-      }
-    },
-    _onDown: function (ev) {
-      var _target = ev.target;
-
-      while (_target && _target.tagName !== 'DIV') {
-        _target = _target.parentElement;
-      }
-
-      if (_target && _target.hasAttribute('ripple')) {
-        var _ripple = _target.getAttribute('ripple');
-        this.set('_rippleToBeCancelled', _ripple);
-        this.set('_prevYPos', Math.ceil(ev.detail.y));
-      }
-    },
-    _onUp: function (ev) {
-      if (this._scrolled) {
-        this.set('_scrolled', false);
-      }
-    },
-  });
-
-</script>
+<script src="semafloor-profile-page.js"></script>

@@ -4,19 +4,13 @@
   <template strip-whitespace>
     <style>
       :host {
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        -o-user-select: none;
         user-select: none;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
         box-sizing: border-box;
 
         display: block;
       }
       *, *::before, *::after {
-        box-sizing: inherit;
+        box-sizing: border-box;
       }
 
       .profile-list {
@@ -38,16 +32,22 @@
         overflow-y: auto;
       }
       paper-dialog > h2 {
-        color: #1DDBD8;
+        margin-top: 0;
+        background-color: #1ddbd8;
+        color: #fff;
+        text-transform: uppercase;
+        height: 64px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
       }
       paper-dialog paper-input.profile-change-email {
         --paper-input-container-focus-color: #1DDBD8;
         margin-bottom: 16px;
       }
       .buttons > paper-button {
+        color: #1ddbd8;
         -webkit-tap-highlight-color: transparent;
         -webkit-tap-highlight-color: rgba(0,0,0,0);
-        color: #1DDBD8;
       }
 
       paper-radio-group {
