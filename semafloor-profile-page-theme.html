@@ -18,6 +18,7 @@
         border-bottom: 1px solid #ddd;
         padding: 16px 0 16px 24px;
         min-height: 64px;
+        margin: 0 8px;
       }
       div > span {
         display: block;
@@ -30,15 +31,6 @@
 
       paper-dialog {
         overflow-y: auto;
-      }
-      paper-dialog > h2 {
-        margin-top: 0;
-        background-color: #1ddbd8;
-        color: #fff;
-        text-transform: uppercase;
-        height: 64px;
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
       }
       paper-dialog paper-input.profile-change-email {
         --paper-input-container-focus-color: #1DDBD8;
@@ -56,8 +48,6 @@
       paper-radio-group,
       paper-radio-button {
         display: block;
-      }
-      paper-radio-button {
         --paper-radio-button-checked-ink-color: #1DDBD8;
         --paper-radio-button-checked-color: #1DDBD8;
       }

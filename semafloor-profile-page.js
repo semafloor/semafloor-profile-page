@@ -162,7 +162,7 @@ Polymer({
       var _detail = _target.getAttribute('data-profile');
 
       this.set('_changeTitle', _detail === 'email' ?
-        'Change Email' : 'Change Time Zone');
+        'Change email' : 'Change time zone');
       this.set('_changeDialog', _detail);
       this.$.changeDialog.open();
     }
@@ -193,7 +193,7 @@ Polymer({
         }
       }else {
         if (this._timezone) {
-          _text = 'Timezone has been changed successfully!';
+          _text = 'Time zone has been changed successfully!';
           // TODO: change to modify value in Firebase.
           this.set('profile.tzone', this._timezone === 'eight' ?
             'GMT +8' : 'GMT +9');
