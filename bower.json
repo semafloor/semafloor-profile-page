@@ -1,6 +1,6 @@
 {
   "name": "semafloor-profile-page",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "authors": [
     "semafloor <semafloor@semafloor.com>"
   ],
@@ -25,7 +25,8 @@
     "paper-toast": "PolymerElements/paper-toast#^1.1.0",
     "paper-radio-group": "PolymerElements/paper-radio-group#^1.0.6",
     "paper-radio-button": "PolymerElements/paper-radio-button#^1.0.11",
-    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#~1.1.0"
+    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#~1.1.0",
+    "semafloor-icons": "semafloor/semafloor-icons#~0.1.1"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
