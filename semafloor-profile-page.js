@@ -73,8 +73,8 @@ Polymer({
 
   // Element Lifecycle
   created: function() {
-    console.time('profile-page-ready');
-    console.log('profile-page-created');
+    // console.time('profile-page-ready');
+    // console.log('profile-page-created');
   },
 
   ready: function() {
@@ -84,8 +84,8 @@ Polymer({
     //
     // This is the point where you should make modifications to the DOM (when
     // necessary), or kick off any processes the element wants to perform.
-    console.timeEnd('profile-page-ready');
-    this.fire('profile-page-ready');
+    // console.timeEnd('profile-page-ready');
+    // this.fire('profile-page-ready');
   },
 
   attached: function() {
@@ -95,7 +95,7 @@ Polymer({
     // This is a good place to perform any work related to your element's
     // visual state or active behavior (measuring sizes, beginning animations,
     // loading resources, etc).
-    console.timeEnd('profile-page-attached');
+    // console.timeEnd('profile-page-attached');
     this.fire('profile-page-attached');
   },
 
@@ -104,7 +104,6 @@ Polymer({
     // removed from a document.
     //
     // Use this to clean up anything you did in `attached`.
-    console.log('profile-page-detached');
   },
 
   _cancelRippleWhileScrolling: function(ev) {
