@@ -200,14 +200,16 @@ Polymer({
         if (_changeEmail && !this._invalidEmail) {
           _text = 'Email has been changed successfully!';
           // TODO: change to modify value in Firebase.
-          this.set('profile.email', _changeEmail);
+          // this.set('profile.email', _changeEmail);
+          this._commitFirebase('email', _changeEmail);
         }
       }else {
         if (this._timezone) {
           _text = 'Time zone has been changed successfully!';
           // TODO: change to modify value in Firebase.
-          this.set('profile.tzone', this._timezone === 'eight' ?
-            'GMT +8' : 'GMT +9');
+          // this.set('profile.tzone', this._timezone === 'eight' ?
+          //   'GMT +8' : 'GMT +9');
+          this._commitFirebase('tzone', this._timezone === 'eight' ? 'GMT +8' : 'GMT +9');
         }
       }
       // update toast message.
@@ -228,7 +230,26 @@ Polymer({
       return;
     }
     // when Firebase retrieves new data, update profile.
-    this.set('profile', ev.detail.val().profile)
+    this.set('profile', ev.detail.val().profile);
+  },
+  // commit user changes to Firebase.
+  _commitFirebase: function(_category, _commitValue) {
+    var _ref = new Firebase(this.$.firebaseProfile.location);
+    _ref.child('profile').once('value', function(snapshot) {
+      _ref.child('profile/' + _category).transaction(function(data) {
+        return _commitValue;
+      }, function(error, committed, snapshot) {
+        if (error) {
+          console.error(error);
+        }else if (!committed) {
+          console.warn('Changes not committed!');
+        }else {
+          console.log('Changes committed to Firebase!');
+        }
+      });
+    }, function(error) {
+      console.error(error);
+    });
   },
 
 });
