@@ -6,7 +6,6 @@ Polymer({
   is: 'semafloor-profile-page',
 
   properties: {
-
     profile: {
       type: Object,
       value: function() {
@@ -22,6 +21,10 @@ Polymer({
           tout: 1440
         }
       }
+    },
+    uid: {
+      type: String,
+      value: 'google:9999'
     },
 
     _invalidEmail: {
@@ -65,11 +68,20 @@ Polymer({
       value: false
     },
 
+    _profileURL: {
+      type: String,
+      value: 'https://semafloor-webapp.firebaseio.com'
+    },
+
   },
 
   listeners: {
     'touchmove': '_cancelRippleWhileScrolling'
   },
+
+  observers: [
+    '_updateProfile(uid)'
+  ],
 
   // Element Lifecycle
   created: function() {
@@ -204,6 +216,19 @@ Polymer({
         this.$.profileToast.show()
       }, 350);
     }
+  },
+
+  _updateProfile: function(_uid) {
+    // when user logged in, uid will change thus Firebase references to different location.
+    this.set('_profileURL', 'https://semafloor-webapp.firebaseio.com/users/google/' + _uid);
+  },
+
+  _onFirebaseValue: function(ev) {
+    if (_.isNull(ev.detail.val())) {
+      return;
+    }
+    // when Firebase retrieves new data, update profile.
+    this.set('profile', ev.detail.val().profile)
   },
 
 });
