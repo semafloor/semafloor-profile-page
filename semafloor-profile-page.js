@@ -201,7 +201,7 @@ Polymer({
           _text = 'Email has been changed successfully!';
           // TODO: change to modify value in Firebase.
           // this.set('profile.email', _changeEmail);
-          this._commitFirebase('email', _changeEmail);
+          this._commitFirebase('email', _changeEmail, _text);
         }
       }else {
         if (this._timezone) {
@@ -209,14 +209,14 @@ Polymer({
           // TODO: change to modify value in Firebase.
           // this.set('profile.tzone', this._timezone === 'eight' ?
           //   'GMT +8' : 'GMT +9');
-          this._commitFirebase('tzone', this._timezone === 'eight' ? 'GMT +8' : 'GMT +9');
+          this._commitFirebase('tzone', this._timezone === 'eight' ? 'GMT +8' : 'GMT +9', _text);
         }
       }
       // update toast message.
-      this.set('_message', _text);
-      this.async(function() {
-        this.$.profileToast.show()
-      }, 350);
+      // this.set('_message', _text);
+      // this.async(function() {
+      //   this.$.profileToast.show()
+      // }, 350);
     }
   },
 
@@ -233,7 +233,8 @@ Polymer({
     this.set('profile', ev.detail.val().profile);
   },
   // commit user changes to Firebase.
-  _commitFirebase: function(_category, _commitValue) {
+  _commitFirebase: function(_category, _commitValue, _successText) {
+    var _that = this;
     var _ref = new Firebase(this.$.firebaseProfile.location);
     _ref.child('profile').once('value', function(snapshot) {
       _ref.child('profile/' + _category).transaction(function(data) {
@@ -245,6 +246,11 @@ Polymer({
           console.warn('Changes not committed!');
         }else {
           console.log('Changes committed to Firebase!');
+          // Update toast message.
+          _that.set('_message', _successText);
+          _that.async(function() {
+            _that.$.profileToast.show()
+          }, 350);
         }
       });
     }, function(error) {
