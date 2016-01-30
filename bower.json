@@ -1,12 +1,11 @@
 {
   "name": "semafloor-profile-page",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "authors": [
     "semafloor <semafloor@semafloor.com>"
   ],
   "description": "An element providing a solution to no problem in particular.",
   "keywords": [
-    "web-component",
     "polymer",
     "seed",
     "semafloor"

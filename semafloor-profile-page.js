@@ -9,17 +9,18 @@ Polymer({
     profile: {
       type: Object,
       value: function() {
-        return {
-          username: 'John Doe',
-          uid: 'jdxhr',
-          group: 2,
-          email: 'johndoe@jmail.com',
-          role: 'normal',
-          room: 'A002',
-          floor: 'T001',
-          tzone: 'GMT +8',
-          tout: 1440
-        }
+        return {};
+        // return {
+        //   username: 'John Doe',
+        //   uid: 'jdxhr',
+        //   group: 2,
+        //   email: 'johndoe@jmail.com',
+        //   role: 'normal',
+        //   room: 'A002',
+        //   floor: 'T001',
+        //   tzone: 'GMT +8',
+        //   tout: 1440
+        // }
       }
     },
     uid: {
