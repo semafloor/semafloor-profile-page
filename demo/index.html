@@ -15,31 +15,50 @@
 
     <style is="custom-style">
       body {
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
+
         margin: 0;
         font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
       }
 
       app-header {
         color: #009688;
+        --app-header-background-front-layer: {
+          background-color: #fff;
+        };
+        --app-header-background-rear-layer: {
+          background-color: #009688;
+        };
       }
 
-      [title] {
+      span.title {
         font-size: 20px;
-        margin-left: 8px;
+        margin-left: 16px;
+      }
+
+      app-header.condensed,
+      app-header.condensed span.title {
+        color: #fff;
       }
 
     </style>
   </head>
   <body>
 
-    <app-drawer-layout>
-      <app-header-layout drawer></app-header-layout>
+    <app-drawer-layout force-narrow>
+      <app-drawer swipe-open></app-drawer>
 
-      <app-header-layout main>
-        <app-header condenses fixed effects="waterfall">
+      <app-header-layout>
+        <app-header condenses fixed effects="material fade-background">
           <app-toolbar>
             <paper-icon-button icon="icons:menu" drawer-toggle></paper-icon-button>
-            <span title>My Profile</span>
+            <span condensed-title hidden></span>
+            <span title hidden>My Profile</span>
+            <span class="title">My Profile</span>
           </app-toolbar>
         </app-header>
 
@@ -60,6 +79,16 @@
     <script>
       var header = document.querySelector('app-header');
       console.time('profile-page-attached');
+
+      header.addEventListener('app-header-transform', function(ev) {
+        header.toggleClass('condensed', ev.detail.progress > 0.5);
+      });
+
+      window.addEventListener('profile-page-attached', function() {
+        var _app = document.querySelector('semafloor-profile-page');
+        var _tel = _app.getElementsByTagName('*').length;
+        console.log('Total element nodes: ', _tel);
+      });
     </script>
 
   </body>

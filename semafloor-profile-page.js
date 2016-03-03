@@ -25,7 +25,9 @@ Polymer({
     },
     uid: {
       type: String,
-      value: 'google:9999'
+      // value: 'google:9999'
+      // TODO: For testing purpose...
+      value: 'google:103450531185198654718'
     },
 
     _invalidEmail: {
@@ -56,17 +58,9 @@ Polymer({
       type: String,
       value: 'El Psy Kongroo'
     },
-    _prevYPos: {
-      type: Number,
-      value: -10
-    },
     _message: {
       type: String,
       value: 'El Psy Kongroo'
-    },
-    _dialogReady: {
-      type: Boolean,
-      value: false
     },
 
     _profileURL: {
@@ -74,10 +68,17 @@ Polymer({
       value: 'https://semafloor-webapp.firebaseio.com'
     },
 
+    _isChangeDialogOpened: Boolean,
+    _placeholderEmail: String,
+    _isLoading: {
+      type: Boolean,
+      value: !0
+    },
+
   },
 
   listeners: {
-    'touchmove': '_cancelRippleWhileScrolling'
+    'profileListContainer.touchmove': '_cancelRippleWhileScrolling'
   },
 
   observers: [
@@ -109,6 +110,7 @@ Polymer({
     // visual state or active behavior (measuring sizes, beginning animations,
     // loading resources, etc).
     // console.timeEnd('profile-page-attached');
+    this._manipulateDocumentScrolling('hidden');
     this.fire('profile-page-attached');
   },
 
@@ -121,12 +123,8 @@ Polymer({
 
   _cancelRippleWhileScrolling: function(ev) {
     if (!this._scrolled) {
-      // change if y position changes.
-      if (this._prevYPos !== ev.changedTouches.screenY) {
-        this.set('_scrolled', true);
-      }
+      this.set('_scrolled', !0);
     }else {
-      // cancel ripple effect during scrolling.
       var _ripples = Polymer.dom(this.root).querySelectorAll('paper-ripple');
       _ripples[this._rippleToBeCancelled].upAction();
     }
@@ -140,49 +138,46 @@ Polymer({
 
     if (_target && _target.hasAttribute('ripple')) {
       var _ripple = _target.getAttribute('ripple');
+      this.set('_scrolled', !1);
       this.set('_rippleToBeCancelled', _rippleNames.indexOf(_ripple));
-      this.set('_prevYPos', Math.ceil(ev.detail.y));
     }
   },
   _onUp: function() {
     if (this._scrolled) {
-      this.set('_scrolled', false);
+      return;
     }
+  },
+  _changeDetail: function(ev) {
+    this.debounce('_changeDetail', function() {
+      // do nothing when no tap or scrolled.
+      if (this._scrolled) {
+        return;
+      }
+
+      var _target = ev.target;
+      while (_target && _target.tagName !== 'DIV') {
+        _target = _target.parentElement;
+      }
+
+      if (_target && _target.hasAttribute('data-profile')) {
+        var _detail = _target.getAttribute('data-profile');
+
+        this.set('_changeTitle', _detail === 'email' ?
+        'Change email' : 'Change time zone');
+        this.set('_changeDialog', _detail);
+
+        // Lazily load and open dialog.
+        this._lazifyDialog('_isChangeDialogOpened', 'changeDialog');
+      }
+    }, 1);
   },
 
   _isEmail: function(_changeDialog) {
     return _changeDialog === 'email';
   },
-  _setDialog: function() {
-    if (!this._dialogReady) {
-      // set dialog when tap.
-      this.set('_dialogReady', true);
-    }
-  },
-  _changeDetail: function(ev) {
-    // do nothing when no tap or scrolled.
-    if (!this._dialogReady || this._scrolled) {
-      return;
-    }
-
-    var _target = ev.target;
-    while (_target && _target.tagName !== 'DIV') {
-      _target = _target.parentElement;
-    }
-
-    if (_target && _target.hasAttribute('data-profile')) {
-      var _detail = _target.getAttribute('data-profile');
-
-      this.set('_changeTitle', _detail === 'email' ?
-        'Change email' : 'Change time zone');
-      this.set('_changeDialog', _detail);
-      this.$.changeDialog.open();
-    }
-    // reset _dialogReady to norm before tap.
-    this.set('_dialogReady', false);
-  },
 
   _confirmChange: function(ev) {
+    // If tap on item and move away from the item, it hence is being scrolled.
     if (this._scrolled) {
       return;
     }
@@ -200,24 +195,17 @@ Polymer({
         var _changeEmail = this._changeEmail;
         if (_changeEmail && !this._invalidEmail) {
           _text = 'Email has been changed successfully!';
-          // TODO: change to modify value in Firebase.
+          // X - TODO: change to modify value in Firebase.
           // this.set('profile.email', _changeEmail);
           this._commitFirebase('email', _changeEmail, _text);
         }
       }else {
         if (this._timezone) {
           _text = 'Time zone has been changed successfully!';
-          // TODO: change to modify value in Firebase.
-          // this.set('profile.tzone', this._timezone === 'eight' ?
-          //   'GMT +8' : 'GMT +9');
+          // X - TODO: change to modify value in Firebase.
           this._commitFirebase('tzone', this._timezone === 'eight' ? 'GMT +8' : 'GMT +9', _text);
         }
       }
-      // update toast message.
-      // this.set('_message', _text);
-      // this.async(function() {
-      //   this.$.profileToast.show()
-      // }, 350);
     }
   },
 
@@ -227,11 +215,22 @@ Polymer({
   },
 
   _onFirebaseValue: function(ev) {
-    if (_.isNull(ev.detail.val())) {
+    var _val = ev.detail.val();
+
+    if (_.isNull(_val)) {
       return;
     }
+
+    // Set to correct email value.
+    this.set('_placeholderEmail', _val.profile.email);
+    // Set to correct time zone value.
+    this.set('_timezone', _val.profile.tzone === 'GMT +8' ? 'eight' : 'nine');
     // when Firebase retrieves new data, update profile.
-    this.set('profile', ev.detail.val().profile);
+    this.set('profile', _val.profile);
+
+    // Reveal element.
+    this.set('_isLoading', !1);
+    this._manipulateDocumentScrolling();
   },
   // commit user changes to Firebase.
   _commitFirebase: function(_category, _commitValue, _successText) {
@@ -259,4 +258,28 @@ Polymer({
     });
   },
 
+  _manipulateDocumentScrolling: function(_state) {
+    var _overflow = typeof _state == 'object' ? '' : _state || '';
+    document.body.style.overflow = _overflow;
+  },
+  // Lazily load and open dialog.
+  _lazifyDialog: function(_isDialogOpened, _dialog) {
+    this._manipulateDocumentScrolling('hidden');
+    if (!this[_isDialogOpened]) {
+      this.set(_isDialogOpened, !0);
+      this.async(function() {
+        this.$$('#' + _dialog).open();
+      }, 1);
+    }else {
+      this.$$('#' + _dialog).open();
+    }
+  },
+
+  _computeLoadingCls: function(_isLoading) {
+    return _isLoading ? '' : 'finish-loading';
+  },
+
+  // X - TODO: Disable and restore document scrolling when dialog opens and closes.
+  // X - TODO: touchmove.
+  // TODO: Enter to confirm input change.
 });
