@@ -1,6 +1,6 @@
 {
   "name": "semafloor-profile-page",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "authors": [
     "semafloor <semafloor@semafloor.com>"
   ],
@@ -35,6 +35,10 @@
     "app-layout": "polymerlabs/app-layout#^0.0.12",
     "paper-icon-button": "PolymerElements/paper-icon-button#^1.0.6",
     "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^1.0.9",
-    "iron-icon": "PolymerElements/iron-icon#^1.0.7"
+    "iron-icon": "PolymerElements/iron-icon#^1.0.7",
+    "semafloor-reserve-page": "semafloor/semafloor-reserve-page#^0.3.20",
+    "semafloor-search-page": "semafloor/semafloor-search-page#^0.4.7",
+    "semafloor-current-page": "semafloor/semafloor-current-page#^0.5.8",
+    "semafloor-room-page": "semafloor/semafloor-room-page#^0.6.9"
   }
 }
