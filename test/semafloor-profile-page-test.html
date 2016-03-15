@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <!-- Step 1: import the element to test -->
+    <link rel="import" href="../semafloor-profile-page.html">
+  </head>
+  <body>
+
+    <!-- You can use the document as a place to set up your fixtures. -->
+    <test-fixture id="profile">
+      <template strip-whitespace>
+        <semafloor-profile-page></semafloor-profile-page>
+      </template>
+    </test-fixture>
+
+    <script>
+      var el;
+
+      suite('<semafloor-profile-page>', function() {
+        var _dialog;
+
+        setup(function() {
+          el = fixture('profile');
+          _dialog = Polymer.dom(el.root).querySelectorAll('paper-dialog');
+        });
+
+        test('uid should be undefined on first init', function() {
+          assert.equal(el.uid, undefined);
+        });
+
+        test('dialog is rendered dynamically', function() {
+          flush(function() {
+            assert.equal(el._isChangeDialogOpened, !1);
+            assert.equal(_dialog.length, 0);
+          });
+        });
+      });
+    </script>
+
+  </body>
+</html>
