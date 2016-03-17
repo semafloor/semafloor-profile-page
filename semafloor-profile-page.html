@@ -364,7 +364,7 @@ Example:
           return;
         }
 
-        var _target = ev.target;
+        var _target = Polymer.dom(ev).rootTarget;
         while (_target && _target.tagName !== 'DIV') {
           _target = _target.parentElement;
         }
@@ -503,6 +503,7 @@ Example:
       }
     },
 
+    // X - TODO: Polymer.dom(ev).rootTarget to retarget event to paper-ripple inside div. This is crucial in Shadow DOM!
     // X - TODO: Disable and restore document scrolling when dialog opens and closes.
     // X - TODO: touchmove.
     // TODO: Enter to confirm input change.
