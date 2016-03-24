@@ -11,13 +11,13 @@
 
 <link rel="import" href="../firebase-element/firebase-collection.html">
 <!--
-An element providing a solution to no problem in particular.
+A sub-element to display user information.
 
 Example:
 
     <semafloor-profile-page></semafloor-profile-page>
 
-@group Seed Elements
+@group Semafloor
 @element semafloor-profile-page
 @demo demo/index.html
 @hero hero.svg
@@ -133,6 +133,8 @@ Example:
         margin-bottom: 16px;
       }
       .buttons > paper-button {
+        font-size: 12px;
+        font-weight: 500;
         color: #1ddbd8;
       }
 
@@ -155,10 +157,7 @@ Example:
           width: calc(100% / 2 - 16px);
           max-width: 480px;
           margin: 16px auto 1px;
-          /*@apply(--shadow-elevation-4dp);*/
-          box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14),
-                      0 1px 10px 0 rgba(0, 0, 0, 0.12),
-                      0 2px 4px -1px rgba(0, 0, 0, 0.4);
+          @apply(--shadow-elevation-4dp);
         }
 
         paper-dialog {
@@ -286,28 +285,46 @@ Example:
     is: 'semafloor-profile-page',
 
     properties: {
+      /**
+       * To temporarily store the retrieved logged in user's profile data.
+       */
       profile: Object,
+      /**
+       * When the user is logged in, the uid is set automatically from login token.
+       */
       uid: String,
 
+      // To indicate an invalid email via user's input.
       _invalidEmail: Boolean,
+      // Bined input value from the email column.
       _changeEmail: String,
+      // Binded input value from the timezone column.
       _timezone: {
         type: String,
         value: 'eight'
       },
+      // Set to indicate finger has left the tapped onto element so the element will not trigger open dialog.
       _scrolled: Boolean,
+      // Set to know which ripple has been tapped onto.
       _rippleToBeCancelled: Number,
+      // Contains string to trigger which dialog the user desires to open (email or timezone).
       _changeDialog: String,
+      // Title of the dialog.
       _changeTitle: String,
+      // Text message of the toast.
       _message: String,
 
+      // Firebase reference URL from which the profile data should be retrived.
       _profileURL: {
         type: String,
         value: 'https://semafloor-webapp.firebaseio.com'
       },
 
+      // If set, the dialog will rendered dynamically.
       _isChangeDialogOpened: Boolean,
+      // Placeholder for input in the email dialog.
       _placeholderEmail: String,
+      // If set, loading spinner is rendered dynamically.
       _isLoading: {
         type: Boolean,
         value: !0
@@ -322,10 +339,6 @@ Example:
     observers: [
       '_updateProfile(uid)'
     ],
-
-    // Element Lifecycle
-    ready: function() {
-    },
 
     attached: function() {
       this.fire('profile-page-attached');
