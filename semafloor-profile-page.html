@@ -221,6 +221,10 @@ Example:
         color: #80cbc4;
         --paper-button-ink-color: #bcbcbc;
       }
+      
+      :host(.dark-theme) paper-toast {
+        background-color: #424242;
+      }
     </style>
 
     <firebase-collection id="firebaseProfile" location="[[_profileURL]]" on-firebase-value="_onFirebaseValue"></firebase-collection>
