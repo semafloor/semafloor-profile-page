@@ -221,7 +221,7 @@ Example:
         color: #80cbc4;
         --paper-button-ink-color: #bcbcbc;
       }
-      
+
       :host(.dark-theme) paper-toast {
         background-color: #424242;
       }
@@ -236,7 +236,7 @@ Example:
 
       <div id="profileListContainer" class$="profile-list-container [[_computeLoadingCls(_isLoading)]]">
         <div class="profile-list" ripple="uname" on-down="_onDown" on-up="_onUp">
-          User Name
+          Username
           <span>{{profile.username}}</span>
           <paper-ripple id="uname"></paper-ripple>
         </div>
@@ -269,7 +269,7 @@ Example:
           <paper-ripple id="room"></paper-ripple>
         </div>
         <div class="profile-list" ripple="floor" on-down="_onDown" on-up="_onUp">
-          Floor Membership
+          Floor membership
           <span>{{profile.floor}}</span>
           <paper-ripple id="floor"></paper-ripple>
         </div>
@@ -277,7 +277,7 @@ Example:
         on-down="_onDown"
         on-up="_onUp"
         on-transitionend="_changeDetail">
-        Time Zone
+        Time zone
         <span>{{profile.tzone}}</span>
         <paper-ripple id="time"></paper-ripple>
       </div>
